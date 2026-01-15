@@ -56,7 +56,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "react-app"
-        CONTAINER_NAME = "lucid"
+        CONTAINER_NAME = "lucid_lalande"
     }
 
     stages {
