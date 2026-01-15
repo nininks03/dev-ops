@@ -1,37 +1,103 @@
+// pipeline {
+//     agent any
+
+//     environment {
+//         IMAGE_NAME = "react-vite-app"
+//         CONTAINER_NAME = "react-vite-container"
+//     }
+
+//     stages {
+
+//         stage('Clone Code') {
+//             steps {
+//                 git branch: 'main',
+//                     url: 'https://github.com/MamthaKSunilkumar/CS8_demo.git'
+//             }
+//         }
+
+//         stage('Build Docker Image') {
+//             steps {
+//                 bat 'docker build -t $IMAGE_NAME .'
+//             }
+//         }
+
+//         stage('Stop Old Container') {
+//             steps {
+//                 bat '''
+//                 docker stop $CONTAINER_NAME || true
+//                 docker rm $CONTAINER_NAME || true
+//                 '''
+//             }
+//         }
+
+//         stage('Run Docker Container') {
+//             steps {
+//                 bat '''
+//                 docker run -d \
+//                 -p 5173:5173 \
+//                 --name $CONTAINER_NAME \
+//                 $IMAGE_NAME
+//                 '''
+//             }
+//         }
+//     }
+
+//     post {
+//         success {
+//             echo 'React app deployed using Docker successfully 🎉'
+//         }
+//         failure {
+//             echo 'Deployment failed ❌'
+//         }
+//     }
+// }
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS 22'
+    environment {
+        IMAGE_NAME = "react-app"
+        CONTAINER_NAME = "lucid_lalande"
     }
 
     stages {
+
         stage('Clone Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/nininks03/dev-ops'
+                    url: 'https://github.com/nininks03/dev-ops.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                bat 'npm install'
+                bat 'docker build -t %IMAGE_NAME% .'
             }
         }
 
-        stage('Build React App') {
+        stage('Stop Old Container') {
             steps {
-                bat 'npm run build'
+                bat '''
+                docker stop %CONTAINER_NAME% || exit 0
+                docker rm %CONTAINER_NAME% || exit 0
+                '''
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                bat '''
+                docker run -d -p 5173:5173 --name %CONTAINER_NAME% %IMAGE_NAME%
+                '''
             }
         }
     }
 
     post {
         success {
-            echo 'React build successful 🎉'
+            echo 'React app deployed using Docker successfully 🎉'
         }
         failure {
-            echo 'Build failed ❌'
+            echo 'Deployment failed ❌'
         }
     }
 }
